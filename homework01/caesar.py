@@ -16,13 +16,14 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
         if symb.isalpha():
             shift_amount = shift % 26
             if symb.islower():
-                shifted = chr((ord(symb) - ord('a') + shift_amount) % 26 + ord('a'))
+                shifted = chr((ord(symb) - ord("a") + shift_amount) % 26 + ord("a"))
             elif symb.isupper():
-                shifted = chr((ord(symb) - ord('A') + shift_amount) % 26 + ord('A'))
+                shifted = chr((ord(symb) - ord("A") + shift_amount) % 26 + ord("A"))
         else:
             shifted = symb
         ciphertext += shifted
     return ciphertext
+
 
 def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     """
@@ -42,9 +43,9 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
         if symb.isalpha():
             shift_amount = shift % 26
             if symb.islower():
-                shifted = chr((ord(symb) - ord('a') - shift_amount) % 26 + ord('a'))
+                shifted = chr((ord(symb) - ord("a") - shift_amount) % 26 + ord("a"))
             elif symb.isupper():
-                shifted = chr((ord(symb) - ord('A') - shift_amount) % 26 + ord('A'))
+                shifted = chr((ord(symb) - ord("A") - shift_amount) % 26 + ord("A"))
         else:
             shifted = symb
         plaintext += shifted
