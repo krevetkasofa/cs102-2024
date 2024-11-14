@@ -36,7 +36,6 @@ def gcd(a: int, b: int) -> int:
     while b != 0:
         a, b = b, a % b
     return a
-    pass
 
 
 def multiplicative_inverse(e: int, phi: int) -> int:
@@ -56,8 +55,6 @@ def multiplicative_inverse(e: int, phi: int) -> int:
         y1, y2 = y2, y1 - full * y2
 
     return y1 % phi
-
-    pass
 
 
 def generate_keypair(primeP: int, primeQ: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
