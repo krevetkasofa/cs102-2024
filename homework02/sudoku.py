@@ -15,7 +15,7 @@ def read_sudoku(path: tp.Union[str, pathlib.Path]) -> tp.List[tp.List[str]]:
 
 def create_grid(puzzle: str) -> tp.List[tp.List[str]]:
     digits = [c for c in puzzle if c in "123456789."]
-    grid = group(digits,9)
+    grid = group(digits, 9)
     return grid
 
 
@@ -45,7 +45,6 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     return result
 
 
-
 def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
     """Возвращает все значения для номера строки, указанной в pos
     >>> get_row([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
@@ -59,7 +58,6 @@ def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     return grid[row_num]
 
 
-
 def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
     """Возвращает все значения для номера столбца, указанного в pos
     >>> get_col([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
@@ -71,7 +69,6 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     """
     col_num = pos[1]
     return [row[col_num] for row in grid]
-
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -109,6 +106,7 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
                 return i, j
     return None
 
+
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
     """Вернуть множество возможных значения для указанной позиции
     >>> grid = read_sudoku('puzzle1.txt')
@@ -129,6 +127,7 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
             values.discard(grid[i][j])
 
     return values
+
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     """Решение пазла, заданного в grid"""
@@ -156,6 +155,7 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
         grid[row][col] = "."
 
     return None
+
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """Если решение solution верно, то вернуть True, в противном случае False"""
