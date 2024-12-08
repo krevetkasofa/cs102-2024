@@ -16,15 +16,18 @@ def remove_wall(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) -> Li
     :param coord:
     :return:
     """
-    x, y = coord
-    rows, cols = len(grid), len(grid[0])
-
-    if choice(["up", "right"]) == "up":
-        if x - 2 >= 0:
-            grid[x - 1][y] = " "
+    x, y, len_col, len_row = coord[0], coord[1], len(grid) - 1, len(grid[0]) - 1
+    directions = ["up", "right"]
+    direction = choice(directions)
+    if (direction == "up") and ((0 <= x - 2 < len_col) and (0 <= y < len_row)):
+        grid[x - 1][y] = " "
     else:
-        if y + 1 < cols:
-            grid[x][y + 1] = " "
+        direction = "right"
+    if (direction == "right") and ((0 <= x < len_col) and (0 <= y + 2 < len_row)):
+        grid[x][y + 1] = " "
+    elif (direction == "right") and ((0 <= x - 2 < len_col) and (0 <= y < len_row)):
+        grid[x - 1][y] = " "
+
     return grid
 
 
@@ -93,15 +96,17 @@ def make_step(grid: List[List[Union[str, int]]], k: int) -> List[List[Union[str,
     :param k:
     :return:
     """
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # Направления: вниз, вверх, вправо, влево
+
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     for x in range(len(grid)):
-        for y in range(len(grid[x])):
+        for y in range(len(grid[0])):
             if grid[x][y] == k:
                 for dx, dy in directions:
                     new_x, new_y = x + dx, y + dy
-                    if grid[new_x][new_y] == 0 <= new_x < len(grid) > new_y >= 0:
+                    if 0 <= new_x < len(grid) and 0 <= new_y < len(grid[0]) and grid[new_x][new_y] == 0:
                         grid[new_x][new_y] = k + 1
+
     return grid
 
 
@@ -201,14 +206,14 @@ def solve_maze(
 
         new_grid = deepcopy(grid)
         x_in, y_in = exits[0]
-        new_grid[x_in][y_in] = 1
+        grid[x_in][y_in] = 1
 
         for x in range(len(new_grid)):
             for y in range(len(new_grid[x])):
-                if new_grid[x][y] == " " or new_grid[x][y] == "X":
-                    new_grid[x][y] = 0
+                if grid[x][y] == " " or grid[x][y] == "X":
+                    grid[x][y] = 0
 
-        path = shortest_path(new_grid, exits[1])
+        path = shortest_path(grid, exits[1])
         return new_grid, path
     path = exits
     return grid, path
