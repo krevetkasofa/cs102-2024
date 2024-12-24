@@ -1,3 +1,5 @@
+"""Creating Sudoku"""
+
 import pathlib
 import random
 import typing as tp
@@ -24,7 +26,8 @@ def display(grid: tp.List[tp.List[str]]) -> None:
     width = 2
     line = "+".join(["-" * (width * 3)] * 3)
     for row in range(9):
-        print("".join(grid[row][col].center(width) + ("|" if str(col) in "25" else "") for col in range(9)))
+        print("".join(grid[row][col].center(width) + ("|" if str(col) in "25" else "")
+for col in range(9)))
         if str(row) in "25":
             print(line)
     print()
@@ -38,11 +41,8 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     >>> group([1,2,3,4,5,6,7,8,9], 3)
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
-    result: tp.List[tp.List[T]] = [list() for i in range(len(values) // n)]
 
-    for i in range(len(values)):
-        result[i // n].append(values[i])
-    return result
+    return [values[i : i + n] for i in range(0, len(values), n)]
 
 
 def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -100,9 +100,9 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
-            if grid[i][j] == ".":
+    for i, row in enumerate(grid):
+        for j, cell in enumerate(row):
+            if cell == ".":
                 return i, j
     return None
 
@@ -117,21 +117,17 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     >>> values == {'2', '5', '9'}
     True
     """
-    row, col = pos
-    values = set("123456789")
-    values -= set(grid[row])
-    values -= set(grid[i][col] for i in range(len(grid)))
-    start_row, start_col = 3 * (row // 3), 3 * (col // 3)
-    for i in range(start_row, start_row + 3):
-        for j in range(start_col, start_col + 3):
-            values.discard(grid[i][j])
-
-    return values
+    row = get_row(grid, pos)
+    col = get_col(grid, pos)
+    block = get_block(grid, pos)
+    original_set = {str(i) for i in range(1, 10)}
+    possible_values = original_set - set(row) - set(col) - set(block)
+    return possible_values
 
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
-    """Решение пазла, заданного в grid"""
-    """ Как решать Судоку?
+    """Решение пазла, заданного в grid
+        Как решать Судоку?
         1. Найти свободную позицию
         2. Найти все возможные значения, которые могут находиться на этой позиции
         3. Для каждого возможного значения:
@@ -139,7 +135,11 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
             3.2. Продолжить решать оставшуюся часть пазла
     >>> grid = read_sudoku('puzzle1.txt')
     >>> solve(grid)
-    [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
+    [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], 
+    ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'],
+     ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], 
+     ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], 
+     ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
     empty_pos = find_empty_positions(grid)
     if not empty_pos:
@@ -160,24 +160,14 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """Если решение solution верно, то вернуть True, в противном случае False"""
 
-    for row in solution:
-        if set(row) != set("123456789"):
+    for i in range(9):
+        row = get_row(solution, (i, 0))
+        col = get_col(solution, (0, i))
+        block = get_block(solution, (i // 3 * 3, i % 3 * 3))
+
+        if (set(row) != set("123456789") or set(col) != set("123456789")
+    or set(block) != set("123456789")):
             return False
-
-    for col in range(9):
-        column = [solution[row][col] for row in range(9)]
-        if set(column) != set("123456789"):
-            return False
-
-    for block_row in range(0, 9, 3):
-        for block_col in range(0, 9, 3):
-            block = []
-            for r in range(block_row, block_row + 3):
-                for c in range(block_col, block_col + 3):
-                    block.append(solution[r][c])
-            if set(block) != set("123456789"):
-                return False
-
     return True
 
 
