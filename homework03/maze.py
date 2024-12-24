@@ -1,3 +1,5 @@
+"""Create the maze"""
+
 from copy import deepcopy
 from random import choice, randint
 from typing import List, Optional, Tuple, Union
@@ -6,10 +8,12 @@ import pandas as pd
 
 
 def create_grid(rows: int = 15, cols: int = 15) -> List[List[Union[str, int]]]:
+    """ Creating"""
     return [["■"] * cols for _ in range(rows)]
 
 
-def remove_wall(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) -> List[List[Union[str, int]]]:
+def remove_wall(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) -> (
+List)[List[Union[str, int]]]:
     """
 
     :param grid:
@@ -18,20 +22,22 @@ def remove_wall(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) -> Li
     """
     x, y, len_col, len_row = coord[0], coord[1], len(grid) - 1, len(grid[0]) - 1
     directions = ["up", "right"]
+
     direction = choice(directions)
-    if (direction == "up") and ((0 <= x - 2 < len_col) and (0 <= y < len_row)):
+    if direction == "up" and ((0 <= x - 2 < len_col) and (0 <= y < len_row)):
         grid[x - 1][y] = " "
     else:
         direction = "right"
-    if (direction == "right") and ((0 <= x < len_col) and (0 <= y + 2 < len_row)):
+    if direction == "right" and ((0 <= x < len_col) and (0 <= y + 2 < len_row)):
         grid[x][y + 1] = " "
-    elif (direction == "right") and ((0 <= x - 2 < len_col) and (0 <= y < len_row)):
+    elif direction == "right" and ((0 <= x - 2 < len_col) and (0 <= y < len_row)):
         grid[x - 1][y] = " "
 
     return grid
 
 
-def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) -> List[List[Union[str, int]]]:
+def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) ->\
+List[List[Union[str, int]]]:
     """
 
     :param rows:
@@ -97,16 +103,17 @@ def make_step(grid: List[List[Union[str, int]]], k: int) -> List[List[Union[str,
     :return:
     """
 
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-
-    for x in range(len(grid)):
-        for y in range(len(grid[0])):
+    for x, row in enumerate(grid):
+        for y, _ in enumerate(row):
             if grid[x][y] == k:
-                for dx, dy in directions:
-                    new_x, new_y = x + dx, y + dy
-                    if 0 <= new_x < len(grid) and 0 <= new_y < len(grid[0]) and grid[new_x][new_y] == 0:
-                        grid[new_x][new_y] = k + 1
-
+                if x + 1 < len(grid) and grid[x + 1][y] == 0:
+                    grid[x + 1][y] = k + 1
+                if x - 1 >= 0 and grid[x - 1][y] == 0:
+                    grid[x - 1][y] = k + 1
+                if y + 1 < len(grid[0]) and grid[x][y + 1] == 0:
+                    grid[x][y + 1] = k + 1
+                if y - 1 >= 0 and grid[x][y - 1] == 0:
+                    grid[x][y - 1] = k + 1
     return grid
 
 
@@ -163,9 +170,9 @@ def encircled_exit(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) ->
     :param coord:
     :return:
     """
+    x, y = coord
     rows = len(grid)
     cols = len(grid[0])
-    x, y = coord
 
     if (
         (x == 0 and y == 0)
@@ -174,18 +181,14 @@ def encircled_exit(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) ->
         or (x == rows - 1 and y == cols - 1)
     ):
         return True
-    if x == 0:
-        if grid[x + 1][y] == "■":
-            return True
-    if x == rows - 1:
-        if grid[x - 1][y] == "■":
-            return True
-    if y == 0:
-        if grid[x][y + 1] == "■":
-            return True
-    if y == cols - 1:
-        if grid[x][y - 1] == "■":
-            return True
+    if x == 0 and y in range(0, cols) and grid[x + 1][y] == "■":
+        return True
+    if x == rows - 1 and y in range(0, cols) and grid[x - 1][y] == "■":
+        return True
+    if y == 0 and x in range(0, rows) and grid[x][y + 1] == "■":
+        return True
+    if y == cols - 1 and x in range(0, rows) and grid[x][y - 1] == "■":
+        return True
 
     return False
 
@@ -208,11 +211,10 @@ def solve_maze(
         x_in, y_in = exits[0]
         grid[x_in][y_in] = 1
 
-        for x in range(len(new_grid)):
-            for y in range(len(new_grid[x])):
+        for x, row in enumerate(grid):
+            for y, _ in enumerate(row):
                 if grid[x][y] == " " or grid[x][y] == "X":
                     grid[x][y] = 0
-
         path = shortest_path(grid, exits[1])
         return new_grid, path
     path = exits
@@ -229,9 +231,9 @@ def add_path_to_grid(
     :return:
     """
 
-    if path is not None:
-        for i in range(len(grid)):
-            for j in range(len(grid[i])):
+    if path:
+        for i, row in enumerate(grid):
+            for j, _ in enumerate(row):
                 if (i, j) in path:
                     grid[i][j] = "X"
     return grid

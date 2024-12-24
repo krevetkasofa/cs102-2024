@@ -1,4 +1,7 @@
+"""Creating a GUI"""
+
 import tkinter as tk
+from copy import deepcopy
 from tkinter import messagebox, ttk
 from typing import List
 
@@ -6,6 +9,7 @@ from maze import add_path_to_grid, bin_tree_maze, solve_maze
 
 
 def draw_cell(x, y, color, size: int = 10):
+    """Drawing cells"""
     x *= size
     y *= size
     x1 = x + size
@@ -14,6 +18,7 @@ def draw_cell(x, y, color, size: int = 10):
 
 
 def draw_maze(grid: List[List[str | int]], size: int = 10):
+    """Drawing the maze"""
     for x, row in enumerate(grid):
         for y, cell in enumerate(row):
             if cell == " ":
@@ -21,18 +26,22 @@ def draw_maze(grid: List[List[str | int]], size: int = 10):
             elif cell == "■":
                 color = "black"
             elif cell == "X":
-                color = "blu"
+                color = "blue"
             draw_cell(y, x, color, size)
 
 
 def show_solution():
-    maze, path = solve_maze(GRID)
-    maze = add_path_to_grid(GRID, path)
-    if path:
-        draw_maze(maze, CELL_SIZE)
-    else:
-        tk.messagebox.showinfo("Message", "No solutions")
+    """What the solution?"""
+    new_grid = deepcopy(GRID)
+    new_grid, path = solve_maze(new_grid)
+    maze = add_path_to_grid(new_grid, path)
+    draw_maze(maze, CELL_SIZE)
 
+def solvable_maze(grid: List[List[str | int]]) -> bool:
+    """Checking if the maze is solvable"""
+    new_grid = deepcopy(grid)
+    _, path = solve_maze(new_grid)
+    return bool(path)
 
 if __name__ == "__main__":
     global GRID, CELL_SIZE
@@ -40,6 +49,11 @@ if __name__ == "__main__":
 
     CELL_SIZE = 10
     GRID = bin_tree_maze(N, M)
+    if not solvable_maze(GRID):
+        print("Maze is not solvable. Trying to regenerate it")
+        GRID = bin_tree_maze(N, M)
+
+    print("Maze is solvable")
 
     window = tk.Tk()
     window.title("Maze")
