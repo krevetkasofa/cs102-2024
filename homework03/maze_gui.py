@@ -37,11 +37,13 @@ def show_solution():
     maze = add_path_to_grid(new_grid, path)
     draw_maze(maze, CELL_SIZE)
 
+
 def solvable_maze(grid: List[List[str | int]]) -> bool:
     """Checking if the maze is solvable"""
     new_grid = deepcopy(grid)
     _, path = solve_maze(new_grid)
     return bool(path)
+
 
 if __name__ == "__main__":
     global GRID, CELL_SIZE
