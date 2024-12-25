@@ -1,7 +1,7 @@
 """GameOfLife GUI version"""
 
 import pygame
-from pygame.locals import QUIT
+from pygame.locals import *
 
 from life import GameOfLife
 from ui import UI

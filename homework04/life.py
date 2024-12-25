@@ -1,9 +1,11 @@
 """Business logic of the game LIFE"""
+
 import pathlib
 import random
 import typing as tp
-import pygame
 
+import pygame
+from pygame.locals import *
 
 Cell = tp.Tuple[int, int]
 Cells = tp.List[int]

@@ -2,10 +2,10 @@
 
 import random
 import typing as tp
-
+from pprint import pprint as pp
 
 import pygame
-from pygame.locals import QUIT
+from pygame.locals import *
 
 Cell = tp.Tuple[int, int]
 Cells = tp.List[int]
@@ -13,8 +13,7 @@ Grid = tp.List[Cells]
 
 
 class GameOfLife:
-    def __init__(self, width: int = 640, height: int = 480, cell_size: int =
-10, speed: int = 10) -> None:
+    def __init__(self, width: int = 640, height: int = 480, cell_size: int = 10, speed: int = 10) -> None:
         self.width = width
         self.height = height
         self.cell_size = cell_size
@@ -42,11 +41,10 @@ class GameOfLife:
 
     def run(self) -> None:
         """Запустить игру"""
-        pygame.init() # pylint: disable=no-member
+        pygame.init()  # pylint: disable=no-member
         clock = pygame.time.Clock()
         pygame.display.set_caption("Game of Life")
         self.screen.fill(pygame.Color("white"))
-
 
         running = True
         while running:
@@ -61,7 +59,7 @@ class GameOfLife:
             pygame.display.flip()
             clock.tick(self.speed)
 
-        pygame.quit() # pylint: disable=no-member
+        pygame.quit()  # pylint: disable=no-member
 
     def create_grid(self, randomize: bool = False) -> Grid:
         """
@@ -97,14 +95,12 @@ class GameOfLife:
                 if val == 1:
                     for x in range(i * self.cell_size, (i + 1) * self.cell_size):
                         pygame.draw.line(
-                            self.screen, pygame.Color("blue"), (j *
-                    self.cell_size, x), ((j + 1) * self.cell_size, x)
+                            self.screen, pygame.Color("blue"), (j * self.cell_size, x), ((j + 1) * self.cell_size, x)
                         )
                 else:
                     for x in range(i * self.cell_size, (i + 1) * self.cell_size + 1):
                         pygame.draw.line(
-                            self.screen, pygame.Color("white"), (j *
-                    self.cell_size, x), ((j + 1) * self.cell_size, x)
+                            self.screen, pygame.Color("white"), (j * self.cell_size, x), ((j + 1) * self.cell_size, x)
                         )
 
     def get_neighbours(self, cell: Cell) -> Cells:
