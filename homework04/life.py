@@ -111,14 +111,13 @@ class GameOfLife:
         game_instance.curr_generation = [row for row in grid if row]
         return game_instance
 
-
-def save(self, filename: pathlib.Path) -> None:
-    """
-    Сохранить текущее состояние клеток в указанный файл.
-    """
-    try:
-        with open(filename, "w") as f:
-            for row in self.curr_generation:
-                f.write(" ".join(str(val) for val in row) + "\n")
-    except Exception as e:
-        print("Ошибка при сохранении файла:", e)
+    def save(self, filename: pathlib.Path) -> None:
+        """
+        Сохранить текущее состояние клеток в указанный файл.
+        """
+        try:
+            with open(filename, "w") as f:
+                for row in self.curr_generation:
+                    f.write(" ".join(str(val) for val in row) + "\n")
+        except Exception as e:
+            print("Ошибка при сохранении файла:", e)
